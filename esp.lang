@@ -1,0 +1,27 @@
+/*
+	Traduction file (Español)
+*/
+
+#define START_MSG 				"[SERVER]: Iniciando servidor"
+
+
+/* Dialogos */
+#define BUTTON1 				"Aceptar"
+#define BUTTON2					"Cancelar"
+#define BUTTON3					"Ingresar"
+#define BUTTON4					"Salir"
+
+#define TITLE_LOGIN 			"Ingreso"
+#define LOGIN_INFO				"Bienvenido de nuevo\n\nIngresa tu clave:"
+#define TITLE_LOGIN_ERROR 		"Ingreso - Error"
+#define LOGIN_INFO_ERROR		"Error - clave incorrecta\n\nIngresa tu clave:"
+
+
+#define TITLE_REGISTER			"Registro"
+#define TITLE_REGISTER_ERROR	"Registro - Error"
+#define REGISTER_INFO			"Bienvenido a Maisk RPG\n\nIngresa una clave:"
+#define REGISTER_INFO_ERROR		"Error, la clave debe tener al menos\n4 caracteres y no ser mayor a 30 caracteres\nIngresa una clave valida:"
+
+#define	TITLE_KICK				"Expulsion"
+#define DELAYEDKICK				"Fuiste expulsado del servidor, razon:\n%s"
+#define BANNED					"Estas baneado de nuestro servidor.\nPor mas informacion, acude al foro."
