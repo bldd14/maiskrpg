@@ -1,6 +1,3 @@
-/*
-	Created by #Fede
-*/
 #include <a_samp>
 #include <a_mysql>
 #include <Pawn.CMD>
