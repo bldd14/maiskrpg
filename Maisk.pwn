@@ -1,16 +1,11 @@
+/*
+	Created by #Fede
+*/
 #include <a_samp>
 #include <a_mysql>
 #include <Pawn.CMD>
 #include <sscanf2>
 #include <streamer>
-
-//#define USE_ENG
-
-#if defined USE_ENG
-	#include "Modules/eng.lang"
-#else
-	#include "Modules/esp.lang"
-#endif
 
 /* Modulos */
 #include "Modules/Server/Dialogs.p"
@@ -22,5 +17,5 @@
 
 
 main(){
-	print(#START_MSG);
+	print("[SERVIDOR]: Iniciando");
 }
