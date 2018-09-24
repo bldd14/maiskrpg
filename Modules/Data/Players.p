@@ -14,7 +14,8 @@ enum Players
 	jVPromedio, // Used for LevelCalc.
 	Float:jPos[4],
 	Float:jStats[2], // Armour && Health.
-	PStats[5], // Skin, money, bank money, age, gender.
+	PStats[4], 	// Skin, money, bank money, age.
+	bool:jGenero, 
 	jPilotGroup[2], // Pilot Group, Group ID and role in group.
 	jFaction,
 	jRank
@@ -32,16 +33,16 @@ hook OnPlayerConnect(playerid){
 	if(rows){
 		Info[playerid][jBaneado] = bool:cache_get_field_content_int(0, "Baneado");
 		if(Info[playerid][jBaneado] == true){
-			DelayKick(playerid, #BANNED);
+			DelayKick(playerid, "Baneado del servidor");
 			cache_delete(result);
 			return 1;
 		}
 		Info[playerid][jID] = cache_get_field_content_int(0, "ID");
 		cache_get_field_content(0, "Password", Info[playerid][jPassword]);
 		cache_get_field_content(0, "Salt", Info[playerid][jSalt]);
-		ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, #TITLE_LOGIN, #LOGIN_INFO, #BUTTON3, #BUTTON4);
+		ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Ingreso", "Bienvenido de nuevo\n\nIngresa tu clave:", "Ingresar", "Salir");
 	} else {
-		ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_PASSWORD, #TITLE_REGISTER, #REGISTER_INFO, #BUTTON3, #BUTTON2);
+		ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_PASSWORD, "Registro", "Bienvenido a Maisk RPG\n\nIngresa una clave:", "Ingresar", "Cancelar");
 	}
 	cache_delete(result);
 	return 1;
@@ -72,7 +73,7 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]){
 			Info[playerid][PStats][1] = cache_get_field_content_int(0, "Dinero");
 			Info[playerid][PStats][2] = cache_get_field_content_int(0, "Banco");
 			Info[playerid][PStats][3] = cache_get_field_content_int(0, "Edad");
-			Info[playerid][PStats][4] = cache_get_field_content_int(0, "Genero");
+			Info[playerid][jGenero] = bool:cache_get_field_content_int(0, "Genero");
 			Info[playerid][jPilotGroup][0] = cache_get_field_content_int(0, "GroupID");
 			Info[playerid][jPilotGroup][1] = cache_get_field_content_int(0, "GroupRole");
 			Info[playerid][jFaction] = cache_get_field_content_int(0, "Faction");
@@ -82,20 +83,45 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]){
 			SetSpawnInfo(playerid, NO_TEAM, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 			SpawnPlayer(playerid);
 		} else {
-			ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, #TITLE_LOGIN_ERROR, #LOGIN_INFO_ERROR, #BUTTON3, #BUTTON4);
+			ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Ingreso - Error", "Error - clave incorrecta\n\nIngresa tu clave:", "Ingresar", "Salir");
 		}
 	}
 	if(dialogid == DIALOG_REGISTER){
 		if(!response) return Kick(playerid);
-		if(strlen(inputtext) > 30 || strlen(inputtext) < 4) return ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_PASSWORD, #TITLE_REGISTER_ERROR, #REGISTER_INFO_ERROR, #BUTTON3, #BUTTON2);
+		if(strlen(inputtext) > 30 || strlen(inputtext) < 4) return ShowPlayerDialog(playerid, DIALOG_REGISTER, DIALOG_STYLE_PASSWORD, "Registro - Error", "Error, la clave debe tener al menos\n4 caracteres y no ser mayor a 30 caracteres\nIngresa una clave valida:", "Ingresar", "Cancelar");
 		for(new i; i < 10; i++){
 			Info[playerid][jSalt][i] = random(79) + 47;
 		}
 		Info[playerid][jSalt][10] = 0;
 		SHA256_PassHash(inputtext, Info[playerid][jSalt], Info[playerid][jPassword], 65);
 		/* Terminar registro -- Estoy pensando en unas cosas para hacerlo interesante */
-		SetSpawnInfo(playerid, NO_TEAM, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0); 
-		SpawnPlayer(playerid);
+		ShowPlayerDialog(playerid, DIALOG_AGE, DIALOG_STYLE_INPUT, "Edad", "Ingresa la edad de tu personaje", "Ingresar", "Salir");
+	}
+	if(dialogid == DIALOG_AGE){
+		if(!response) return Kick(playerid);
+		if(strval(inputtext) < 18 || strlen(inputtext) > 70) return ShowPlayerDialog(playerid, DIALOG_AGE, DIALOG_STYLE_INPUT, "Edad - Error", "Ingresa la edad de tu personaje\n\nError: Debe estar entre 18 y 70 años", "Ingresar", "Salir");
+		Info[playerid][PStats][3] = strval(inputtext);
+		ShowPlayerDialog(playerid, DIALOG_GENDER, DIALOG_STYLE_MSGBOX, "Genero", "Elige el genero de tu personaje.", "Masculino", "Femenino");
+		return 1;
+	}
+	if(dialogid == DIALOG_GENDER){
+		if(response){
+			Info[playerid][jGenero] = false;
+		} else {
+			Info[playerid][jGenero] = true;
+		}
+		new query[200];
+		GetPlayerName(playerid, query, sizeof(query));
+		mysql_format(Handle, query, sizeof(query), "INSERT INTO players (Name, Password, Salt, Edad, Genero) VALUES (%e, %e, %e, %d, %d)", 
+			query,
+			Info[playerid][jPassword],
+			Info[playerid][jSalt],
+			Info[playerid][PStats][3],
+			Info[playerid][jGenero]);
+		mysql_query(Handle, query, false);
+
+		ShowPlayerDialog(playerid, DIALOG_INGRESO, DIALOG_STYLE_LIST, "Modo de juego", "Campaña (Misiones)\nMundo libre (Solo)\nMundo libre (Multijugador)", "Elegiir", "");
+		return 1;
 	}
 	return 0;
 }
@@ -122,7 +148,7 @@ hook OnPlayerDisconnect(playerid, reason){
 		Info[playerid][PStats][1],
 		Info[playerid][PStats][2],
 		Info[playerid][PStats][3],
-		Info[playerid][PStats][4],
+		Info[playerid][jGenero],
 		Info[playerid][jPilotGroup][0],
 		Info[playerid][jPilotGroup][1],
 		Info[playerid][jFaction],

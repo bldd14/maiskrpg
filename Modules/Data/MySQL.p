@@ -8,6 +8,6 @@ new Handle;
 #define 	MySQL_DB 		"sampdb"
 
 hook OnGameModeInit(){
-	Handle = mysql_connect(MySQL_Host, MySQL_User, MySQL_Pass, MySQL_DB);
+	Handle = mysql_connect(MySQL_Host, MySQL_User, MySQL_DB, MySQL_Pass);
 	return 1;
 }
