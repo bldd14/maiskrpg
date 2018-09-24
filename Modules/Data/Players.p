@@ -37,7 +37,6 @@ hook OnPlayerConnect(playerid){
 			cache_delete(result);
 			return 1;
 		}
-		Info[playerid][jID] = cache_get_field_content_int(0, "ID");
 		cache_get_field_content(0, "Password", Info[playerid][jPassword]);
 		cache_get_field_content(0, "Salt", Info[playerid][jSalt]);
 		ShowPlayerDialog(playerid, DIALOG_LOGIN, DIALOG_STYLE_PASSWORD, "Ingreso", "Bienvenido de nuevo\n\nIngresa tu clave:", "Ingresar", "Salir");
@@ -53,7 +52,7 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]){
 		if(!response) return Kick(playerid);
 		new temp_hash[65];
 		SHA256_PassHash(inputtext, Info[playerid][jSalt], temp_hash, 65);
-		if(!strcmp(inputtext, temp_hash)){
+		if(!strcmp(Info[playerid][jPassword], temp_hash)){
 			new query[36+MAX_PLAYER_NAME];
 			UsuarioLogueo[playerid] = true;
 			GetPlayerName(playerid, query, sizeof(query));
@@ -112,7 +111,7 @@ hook OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]){
 		}
 		new query[200];
 		GetPlayerName(playerid, query, sizeof(query));
-		mysql_format(Handle, query, sizeof(query), "INSERT INTO players (Name, Password, Salt, Edad, Genero) VALUES (%e, %e, %e, %d, %d)", 
+		mysql_format(Handle, query, sizeof(query), "INSERT INTO players (Name, Password, Salt, Edad, Genero) VALUES ('%e', '%e', '%e', '%d', '%d')", 
 			query,
 			Info[playerid][jPassword],
 			Info[playerid][jSalt],
