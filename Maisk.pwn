@@ -7,6 +7,8 @@
 #include <sscanf2>
 #include <streamer>
 
+#define funcion%0(%1) forward%0(%1); public%0(%1)
+
 /* Modulos */
 #include "Modules/Server/Dialogs.p"
 
@@ -15,6 +17,9 @@
 
 #include "Modules/Utils/Funcs.p"
 
+#include "Modules/Servidor/Climas.p"
+
+#include "Modules/Aviones/Velocimetro.p"
 
 main(){
 	print("[SERVIDOR]: Iniciando");
