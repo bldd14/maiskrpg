@@ -1,4 +1,4 @@
-funcion DelayKick(playerid, reason[]){
+funcion DelayKick(playerid, const reason[]){
 	new fstring[70];
 	format(fstring, sizeof(fstring), "Fuiste expulsado del servidor, razon:\n%s", reason);
 	ShowPlayerDialog(playerid, EMPTY_DIALOG, DIALOG_STYLE_MSGBOX, "Expulsion", fstring, "Aceptar", "");
