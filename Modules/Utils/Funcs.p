@@ -7,7 +7,7 @@ funcion DelayKick(playerid, reason[]){
 
 funcion Kickear(playerid) return Kick(playerid);
 
-funcion EsAvion(vehicleid){
+/*funcion EsAvion(vehicleid){
 	switch(vehicleid){
 		case 417: return true;
 		case 425: return true;
@@ -26,7 +26,16 @@ funcion EsAvion(vehicleid){
 		case 592 .. 593: return true;
 	}
 	return false;
+}*/
+
+stock EsAvion(vehicleid)
+{
+    new modelid = GetVehicleModel(vehicleid);
+    if(modelid == 593 || modelid == 592 || modelid == 577 || modelid == 511 || modelid == 512 || modelid == 520 || modelid == 553 || modelid == 476 || modelid == 519 || modelid == 460 || modelid == 513)
+        return true;
+    return false;
 }
+
 
 stock GetPlayerSpeed(playerid) // by Misco
 {

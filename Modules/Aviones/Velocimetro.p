@@ -15,8 +15,8 @@ new PlayerText:VeloTD0[MAX_PLAYERS],
 	PlayerText:VeloTD10[MAX_PLAYERS],
 	VeloTimer[MAX_PLAYERS];
 
-hook OnPlayerEnterVehicle(playerid, vehicleid, ispassenger){
-	if(EsAvion(vehicleid)){
+hook OnPlayerStateChange(playerid, newstate, oldstate){
+	if((newstate == PLAYER_STATE_DRIVER || newstate == PLAYER_STATE_PASSENGER) && EsAvion(GetVehicleModel(GetPlayerVehicleID(playerid)))){
 		PlayerTextDrawShow(playerid, VeloTD0[playerid]);
 		PlayerTextDrawShow(playerid, VeloTD1[playerid]);
 		PlayerTextDrawShow(playerid, VeloTD2[playerid]);
@@ -29,11 +29,7 @@ hook OnPlayerEnterVehicle(playerid, vehicleid, ispassenger){
 		PlayerTextDrawShow(playerid, VeloTD9[playerid]);
 		PlayerTextDrawShow(playerid, VeloTD10[playerid]);
 		VeloTimer[playerid] = SetTimerEx("CheckVelo", 250, true, "i", playerid);
-	}
-	return 1;
-}
-hook OnPlayerExitVehicle(playerid, vehicleid, ispassenger){
-	if(EsAvion(vehicleid)){
+	} else if(newstate == PLAYER_STATE_ONFOOT && (oldstate == PLAYER_STATE_DRIVER || oldstate == PLAYER_STATE_PASSENGER)){
 		PlayerTextDrawHide(playerid, VeloTD0[playerid]);
 		PlayerTextDrawHide(playerid, VeloTD1[playerid]);
 		PlayerTextDrawHide(playerid, VeloTD2[playerid]);
@@ -45,7 +41,7 @@ hook OnPlayerExitVehicle(playerid, vehicleid, ispassenger){
 		PlayerTextDrawHide(playerid, VeloTD8[playerid]);
 		PlayerTextDrawHide(playerid, VeloTD9[playerid]);
 		PlayerTextDrawHide(playerid, VeloTD10[playerid]);
-		VeloTimer[playerid] = SetTimerEx("CheckVelo", 250, true, "i", playerid);
+		KillTimer(VeloTimer[playerid]);
 	}
 	return 1;
 }
@@ -69,7 +65,6 @@ hook OnPlayerDisconnect(playerid, reason){
 
 
 funcion CheckVelo(playerid){
-	if(!IsPlayerInAnyVehicle(playerid)) return KillTimer(VeloTimer[playerid]);
 	new tstr[21], velocidad;
 	velocidad = GetPlayerSpeed(playerid);
 	/*

@@ -2,7 +2,7 @@
 
 new bool:UsuarioLogueo[MAX_PLAYERS];
 
-enum Players
+enum PlayerInfo
 {
 	jID,
 	jPassword[65],
@@ -20,7 +20,7 @@ enum Players
 	jFaction,
 	jRank
 }
-new Info[MAX_PLAYERS][Players];
+new Info[MAX_PLAYERS][PlayerInfo];
 
 hook OnPlayerConnect(playerid){
 	UsuarioLogueo[playerid] = false;
