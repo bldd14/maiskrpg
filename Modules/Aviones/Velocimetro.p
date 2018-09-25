@@ -16,6 +16,7 @@ new PlayerText:VeloTD0[MAX_PLAYERS],
 	VeloTimer[MAX_PLAYERS];
 
 hook OnPlayerStateChange(playerid, newstate, oldstate){
+	new bool:isVisible = false;
 	if((newstate == PLAYER_STATE_DRIVER || newstate == PLAYER_STATE_PASSENGER) && EsAvion(GetVehicleModel(GetPlayerVehicleID(playerid)))){
 		PlayerTextDrawShow(playerid, VeloTD0[playerid]);
 		PlayerTextDrawShow(playerid, VeloTD1[playerid]);
@@ -29,19 +30,24 @@ hook OnPlayerStateChange(playerid, newstate, oldstate){
 		PlayerTextDrawShow(playerid, VeloTD9[playerid]);
 		PlayerTextDrawShow(playerid, VeloTD10[playerid]);
 		VeloTimer[playerid] = SetTimerEx("CheckVelo", 250, true, "i", playerid);
-	} else if(newstate == PLAYER_STATE_ONFOOT && (oldstate == PLAYER_STATE_DRIVER || oldstate == PLAYER_STATE_PASSENGER)){
-		PlayerTextDrawHide(playerid, VeloTD0[playerid]);
-		PlayerTextDrawHide(playerid, VeloTD1[playerid]);
-		PlayerTextDrawHide(playerid, VeloTD2[playerid]);
-		PlayerTextDrawHide(playerid, VeloTD3[playerid]);
-		PlayerTextDrawHide(playerid, VeloTD4[playerid]);
-		PlayerTextDrawHide(playerid, VeloTD5[playerid]);
-		PlayerTextDrawHide(playerid, VeloTD6[playerid]);
-		PlayerTextDrawHide(playerid, VeloTD7[playerid]);
-		PlayerTextDrawHide(playerid, VeloTD8[playerid]);
-		PlayerTextDrawHide(playerid, VeloTD9[playerid]);
-		PlayerTextDrawHide(playerid, VeloTD10[playerid]);
-		KillTimer(VeloTimer[playerid]);
+		if (!isVisible) isVisible = !isVisible;
+	} else if(newstate == PLAYER_STATE_ONFOOT && (oldstate == PLAYER_STATE_DRIVER || oldstate == PLAYER_STATE_PASSENGER)) {
+		if (isVisible)
+		{
+			PlayerTextDrawHide(playerid, VeloTD0[playerid]);
+			PlayerTextDrawHide(playerid, VeloTD1[playerid]);
+			PlayerTextDrawHide(playerid, VeloTD2[playerid]);
+			PlayerTextDrawHide(playerid, VeloTD3[playerid]);
+			PlayerTextDrawHide(playerid, VeloTD4[playerid]);
+			PlayerTextDrawHide(playerid, VeloTD5[playerid]);
+			PlayerTextDrawHide(playerid, VeloTD6[playerid]);
+			PlayerTextDrawHide(playerid, VeloTD7[playerid]);
+			PlayerTextDrawHide(playerid, VeloTD8[playerid]);
+			PlayerTextDrawHide(playerid, VeloTD9[playerid]);
+			PlayerTextDrawHide(playerid, VeloTD10[playerid]);
+			KillTimer(VeloTimer[playerid]);
+			isVisible = !isVisible;
+		}
 	}
 	return 1;
 }
