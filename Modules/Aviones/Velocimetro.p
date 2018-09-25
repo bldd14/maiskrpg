@@ -65,15 +65,15 @@ hook OnPlayerDisconnect(playerid, reason){
 
 
 funcion CheckVelo(playerid){
-	new tstr[21], velocidad;
+	new tstr[21], float:velocidad;
 	velocidad = GetPlayerSpeed(playerid);
 	/*
 		1 KM ~ 0.53995 nudos
 		VelPlayer ~ ? nudos
 	*/
-	velocidad = int:floatadd(Float:velocidad, 0.53995);
+	velocidad = floatadd(Float:velocidad, 0.53995);
 
-	format(tstr, sizeof(tstr), "Velocidad: %d nudos", velocidad);
+	format(tstr, sizeof(tstr), "Velocidad: %d nudos", floatround(velocidad));
 	PlayerTextDrawSetString(playerid, VeloTD1[playerid], tstr);
 
 	if(GetPlayerWeather(playerid) == 8 || GetPlayerWeather(playerid) == 16){
