@@ -7,27 +7,6 @@ funcion DelayKick(playerid, reason[]){
 
 funcion Kickear(playerid) return Kick(playerid);
 
-/*funcion EsAvion(vehicleid){
-	switch(vehicleid){
-		case 417: return true;
-		case 425: return true;
-		case 447: return true;
-		case 460: return true;
-		case 469: return true;
-		case 476: return true;
-		case 487 .. 488: return true;
-		case 497: return true;
-		case 511 .. 513: return true;
-		case 519 .. 520: return true;
-		case 548: return true; 
-		case 553: return true;
-		case 563: return true;
-		case 577: return true;
-		case 592 .. 593: return true;
-	}
-	return false;
-}*/
-
 stock EsAvion(vehicleid)
 {
     new modelid = GetVehicleModel(vehicleid);
@@ -44,7 +23,5 @@ stock GetPlayerSpeed(playerid) // by Misco
         GetVehicleVelocity(GetPlayerVehicleID(playerid),ST[0],ST[1],ST[2]);
         else GetPlayerVelocity(playerid,ST[0],ST[1],ST[2]);
     ST[3] = floatsqroot(floatpower(floatabs(ST[0]), 2.0) + floatpower(floatabs(ST[1]), 2.0) + floatpower(floatabs(ST[2]), 2.0)) * 100.3;
-    return floatround(ST[3]);
+    return floatround(ST[3]/0.53995);
 }
-
-funcion GetPlayerWeather(playerid) return ClimaServidor;

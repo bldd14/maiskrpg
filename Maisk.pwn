@@ -26,13 +26,23 @@ enum {
 
 #include "Modules/Utils/Funcs.p"
 
-#include "Modules/Aviones/Velocimetro.p"
+#include "Modules/Aviones/Airports.p"
 #include "Modules/Aviones/Gasolina.p"
+#include "Modules/Aviones/Velocimetro.p"
+
 
 CMD:aviontest(playerid){
 	new Float:X, Float:Y, Float:Z;
 	GetPlayerPos(playerid, X, Y, Z);
-	CreateVehicle(519, X, Y, Z, 0, 0, 0, 0, 0);
+	new tem = CreateVehicle(519, X, Y, Z, 0, 0, 0, 0, 0);
+	SetVehicleToRespawn(tem);
+	return 1;
+}
+
+CMD:gaso(playerid, params[]){
+	if(isnull(params)) return SendClientMessage(playerid, -1, "No vacio plz.");
+	if(!IsPlayerInAnyVehicle(playerid)) return SendClientMessage(playerid, -1, "So bobito e");
+	VehicleFuel[GetPlayerVehicleID(playerid)] = strval(params);
 	return 1;
 }
 
