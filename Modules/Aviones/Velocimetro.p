@@ -69,7 +69,7 @@ hook OnPlayerDisconnect(playerid, reason){
 funcion CheckVelo(playerid){
 	new tstr[21], velocidad = GetPlayerSpeed(playerid);
 	velocidad = GetPlayerSpeed(playerid);
-	format(tstr, sizeof(tstr), "Velocidad: %d nudos", velocidad);
+	format(tstr, sizeof(tstr), "Velocidad: %d nudos", floatround(velocidad));
 	PlayerTextDrawSetString(playerid, VeloTD1[playerid], tstr);
 
 	if(ClimaServidor == 8 || ClimaServidor == 16){ // Lluvia
