@@ -16,7 +16,8 @@ new PlayerText:VeloTD0[MAX_PLAYERS],
 	VeloTimer[MAX_PLAYERS];
 
 hook OnPlayerStateChange(playerid, newstate, oldstate){
-	if((newstate == PLAYER_STATE_DRIVER || newstate == PLAYER_STATE_PASSENGER) && EsAvion(GetVehicleModel(GetPlayerVehicleID(playerid)))){
+	print("Hooked OnPlayerStateChange was called, ur code sucks.");
+	if(newstate == PLAYER_STATE_DRIVER || newstate == PLAYER_STATE_PASSENGER){
 		PlayerTextDrawShow(playerid, VeloTD0[playerid]);
 		PlayerTextDrawShow(playerid, VeloTD1[playerid]);
 		PlayerTextDrawShow(playerid, VeloTD2[playerid]);
@@ -29,7 +30,8 @@ hook OnPlayerStateChange(playerid, newstate, oldstate){
 		PlayerTextDrawShow(playerid, VeloTD9[playerid]);
 		PlayerTextDrawShow(playerid, VeloTD10[playerid]);
 		VeloTimer[playerid] = SetTimerEx("CheckVelo", 250, true, "i", playerid);
-	} else if(newstate == PLAYER_STATE_ONFOOT && (oldstate == PLAYER_STATE_DRIVER || oldstate == PLAYER_STATE_PASSENGER)){
+	}
+	if(newstate == PLAYER_STATE_ONFOOT && (oldstate == PLAYER_STATE_DRIVER || oldstate == PLAYER_STATE_PASSENGER)){
 		PlayerTextDrawHide(playerid, VeloTD0[playerid]);
 		PlayerTextDrawHide(playerid, VeloTD1[playerid]);
 		PlayerTextDrawHide(playerid, VeloTD2[playerid]);
@@ -65,22 +67,16 @@ hook OnPlayerDisconnect(playerid, reason){
 
 
 funcion CheckVelo(playerid){
-	new tstr[21], float:velocidad;
+	new tstr[21], velocidad = GetPlayerSpeed(playerid);
 	velocidad = GetPlayerSpeed(playerid);
-	/*
-		1 KM ~ 0.53995 nudos
-		VelPlayer ~ ? nudos
-	*/
-	velocidad = floatadd(Float:velocidad, 0.53995);
-
 	format(tstr, sizeof(tstr), "Velocidad: %d nudos", floatround(velocidad));
 	PlayerTextDrawSetString(playerid, VeloTD1[playerid], tstr);
 
-	if(GetPlayerWeather(playerid) == 8 || GetPlayerWeather(playerid) == 16){
+	if(ClimaServidor == 8 || ClimaServidor == 16){ // Lluvia
 		PlayerTextDrawSetString(playerid, VeloTD10[playerid], "Estado: TM");
 		PlayerTextDrawColor(playerid, VeloTD10[playerid], 0xD0E514AF);
 	}
-	if(GetPlayerWeather(playerid) == 19){
+	if(ClimaServidor == 19){ // Tormenta de arena
 		PlayerTextDrawSetString(playerid, VeloTD10[playerid], "Estado: TE");
 		PlayerTextDrawColor(playerid, VeloTD10[playerid], 0xEF2809AF);
 	}
@@ -91,32 +87,49 @@ funcion CheckVelo(playerid){
 	if(Vida >= 950){
 		PlayerTextDrawSetString(playerid, VeloTD10[playerid], "Estado: OP");
 		PlayerTextDrawColor(playerid, VeloTD10[playerid], 8388863);
-	} else if(Vida < 950 && Vida >= 600){
+	} else if(Vida < 950 && Vida >= 700){
 		PlayerTextDrawSetString(playerid, VeloTD10[playerid], "Estado: DP");
-		PlayerTextDrawColor(playerid, VeloTD10[playerid], 0xD0E514AF);
-	} else if(Vida < 600 && Vida >= 300){
+		PlayerTextDrawColor(playerid, VeloTD10[playerid], 0xFFFF00FF);
+	} else if(Vida < 700 && Vida >= 350){
 		PlayerTextDrawSetString(playerid, VeloTD10[playerid], "Estado: CP");
-		PlayerTextDrawColor(playerid, VeloTD10[playerid], 0xEF2809AF);
-		new rand = random(300)+1;
-		if(rand < 10 && motor != 0){
-			SetVehicleParamsEx(GetPlayerVehicleID(playerid), 0, 0, 0, 0, 0, 0, 0);
-			SendClientMessage(playerid, -1, "Algo esta mal, el motor se apago. Reportar inmediatamente a ATC.");
-		}
-	} else {
-		PlayerTextDrawSetString(playerid, VeloTD10[playerid], "Estado: MD");
-		PlayerTextDrawColor(playerid, VeloTD10[playerid], 0xEF2809AF);
+		PlayerTextDrawColor(playerid, VeloTD10[playerid], 0xFFFF00FF);
 		new rand = random(1000)+1;
 		if(rand < 10 && motor != 0){
 			SetVehicleParamsEx(GetPlayerVehicleID(playerid), 0, 0, 0, 0, 0, 0, 0);
 			SendClientMessage(playerid, -1, "Algo esta mal, el motor se apago. Reportar inmediatamente a ATC.");
+			PlayerTextDrawSetString(playerid, VeloTD10[playerid], "Estado: CE");
 		}
-	}
+	} else {
+		PlayerTextDrawSetString(playerid, VeloTD10[playerid], "Estado: MD");
+		PlayerTextDrawColor(playerid, VeloTD10[playerid], 0xFF0000FF);
+		new rand = random(200)+1;
+		if(rand < 10 && motor != 0){
+			SetVehicleParamsEx(GetPlayerVehicleID(playerid), 0, 0, 0, 0, 0, 0, 0);
+			SendClientMessage(playerid, -1, "Algo esta mal, el motor se apago. Reportar inmediatamente a ATC.");
+			PlayerTextDrawSetString(playerid, VeloTD10[playerid], "Estado: CE");
+		}
+	} 
+	format(tstr, sizeof(tstr), "Gas: %d", VehicleFuel[GetPlayerVehicleID(playerid)]*100/GetVehicleMaxFuel(GetVehicleModel(GetPlayerVehicleID(playerid))));
+	PlayerTextDrawSetString(playerid, VeloTD8[playerid], tstr);
 
-	/* Hacer sistema de gasolina ahora, xd.*/
 	return 1;
 }
 
-
+hook OnPlayerDeath(playerid){
+	PlayerTextDrawHide(playerid, VeloTD0[playerid]);
+	PlayerTextDrawHide(playerid, VeloTD1[playerid]);
+	PlayerTextDrawHide(playerid, VeloTD2[playerid]);
+	PlayerTextDrawHide(playerid, VeloTD3[playerid]);
+	PlayerTextDrawHide(playerid, VeloTD4[playerid]);
+	PlayerTextDrawHide(playerid, VeloTD5[playerid]);
+	PlayerTextDrawHide(playerid, VeloTD6[playerid]);
+	PlayerTextDrawHide(playerid, VeloTD7[playerid]);
+	PlayerTextDrawHide(playerid, VeloTD8[playerid]);
+	PlayerTextDrawHide(playerid, VeloTD9[playerid]);
+	PlayerTextDrawHide(playerid, VeloTD10[playerid]);
+	KillTimer(VeloTimer[playerid]);
+	return 1;
+}
 hook OnPlayerConnect(playerid){
 	VeloTD0[playerid] = CreatePlayerTextDraw(playerid, 510.333312, 432.492584, "usebox");
 	PlayerTextDrawLetterSize(playerid, VeloTD0[playerid], 0.000000, -3.589093);
